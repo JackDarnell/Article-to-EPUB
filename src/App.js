@@ -1,15 +1,25 @@
 import logo from './logo.svg';
 import './App.css';
-import streamToBlob from 'stream-to-blob';
+//import streamToBlob from 'stream-to-blob';
+import { useState } from 'react';
 
 var validUrl = require('valid-url');
 
+
+
 //api invoke url: https://q47qtvrb01.execute-api.us-east-2.amazonaws.com/default
+
+
+function App() {
+
+  var articleHTML = useState("<p>Article HTML</p>");
+
 
 async function downloadEpub(url){
   const articleData = await getArticle(document.getElementById('url').value);
   console.log("ARTICLE DATA: " + articleData.content);
   if (articleData != null) {
+    articleHTML = articleData.content;
     await retrieveEpub(articleData.content, articleData.title, articleData.author, articleData.date);
   }
 }
@@ -59,19 +69,19 @@ const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
   return blob;
 }
 
-function decodeBase64(base64String) {
-  // Decode the URL-encoded Base64 string
-  const decodedString = decodeURIComponent(window.atob(base64String));
+// function decodeBase64(base64String) {
+//   // Decode the URL-encoded Base64 string
+//   const decodedString = decodeURIComponent(window.atob(base64String));
 
-  // Convert the decoded string to a Uint8Array
-  const byteArray = new Uint8Array(decodedString.length);
-  for (let i = 0; i < decodedString.length; ++i) {
-    byteArray[i] = decodedString.charCodeAt(i);
-  }
+//   // Convert the decoded string to a Uint8Array
+//   const byteArray = new Uint8Array(decodedString.length);
+//   for (let i = 0; i < decodedString.length; ++i) {
+//     byteArray[i] = decodedString.charCodeAt(i);
+//   }
 
-  // Return the Uint8Array
-  return byteArray;
-}
+//   // Return the Uint8Array
+//   return byteArray;
+// }
 
 
 async function retrieveEpub(content, title, author, date) {
@@ -107,35 +117,8 @@ async function retrieveEpub(content, title, author, date) {
   document.body.removeChild(downloadLink);
 });
 
-
-  // const byteArray = decodeBase64(response);
-  // const blob = new Blob([byteArray], { type: "application/epub+zip" });
-
-// const byteArray = Uint8Array.from(atob(response.body), c => c.charCodeAt(0));
-// const blob = new Blob([byteArray], { type: "application/epub+zip" });
-
-// Convert the EPUB data to a Blob object
-
-// Convert the EPUB data to a Blob object
-
-
-// Create a URL for the Blob object
-
-  
-    ;
 }
 
-function App() {
-
-  //const data = await postData('https://anb34jlouk2jykl4364xlbddwu0exutn.lambda-url.us-east-2.on.aws/', { url: 'https://hackaday.com/2023/02/24/toroid-transformers-explained/' })
-
-  // postData('https://anb34jlouk2jykl4364xlbddwu0exutn.lambda-url.us-east-2.on.aws/', { url: 'https://hackaday.com/2023/02/24/toroid-transformers-explained/' })
-  // .then((data) => {
-  //   console.log(data); // JSON data parsed by `data.json()` call
-  // });
-  
-
-  //getArticle();
 
   return (
     <div className="App">
@@ -145,6 +128,7 @@ function App() {
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <input type="text" id="url" name="url" />
+        <div dangerouslySetInnerHTML={{ __html: articleHTML }} />
         <button onClick={downloadEpub}>Get Article</button>
         <a
           className="App-link"
@@ -152,7 +136,6 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
         </a>
       </header>
     </div>
