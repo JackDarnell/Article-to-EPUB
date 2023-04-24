@@ -3,7 +3,8 @@
 import React, {useState} from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {  createUserWithEmailAndPassword  } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
  
 const Signup = () => {
@@ -21,6 +22,11 @@ const Signup = () => {
             // Signed in
             const user = userCredential.user;
             console.log(user);
+            //create a new user in the database, with the kindle email address and the UID
+            setDoc(doc(db, "users", user.uid), {
+                kindleEmail: kindleEmail,
+            });
+
             navigate("/")
             // ...
         })

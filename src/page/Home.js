@@ -6,6 +6,8 @@ import { getAuth } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import {  signOut } from "firebase/auth";
 import { auth } from '../firebase';
+import { db } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 
 
@@ -16,7 +18,27 @@ var validUrl = require('valid-url');;
 
 
 function Home() {
+  const [kindleEmail, setKindleEmail] = useState('');
   const navigate = useNavigate();
+  
+
+  //get the user's kindle email address from the database
+  const getKindleEmail = async () => {
+    const user = auth.currentUser;
+    const uid = user.uid;
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        setKindleEmail(docSnap.data().kindleEmail)
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+        setKindleEmail("Error");
+    }
+  }
+
+  getKindleEmail();
 
   const handleLogout = () => {               
     signOut(auth).then(() => {
@@ -159,6 +181,8 @@ async function retrieveEpub(content, title, author, date) {
     <div className="App">
     <nav>
       <h2>Send To Kindle App</h2>
+      <h3>Logged in as: {auth.currentUser.email}</h3>
+      <h3>Kindle Email: {kindleEmail}</h3>
       <button onClick={handleLogout}>
         Logout
       </button>
