@@ -38,7 +38,7 @@ function Home() {
     }
   }
 
-  getKindleEmail();
+  
 
   const handleLogout = () => {               
     signOut(auth).then(() => {
@@ -58,10 +58,11 @@ function Home() {
           // https://firebase.google.com/docs/reference/js/firebase.User
           const uid = user.uid;
           // ...
+          getKindleEmail();
           console.log("uid", uid)
         } else {
           // User is signed out
-          
+          setKindleEmail("Error");
           navigate("/login")
           console.log("user is logged out")
         }
@@ -174,6 +175,7 @@ async function retrieveEpub(content, title, author, date) {
   document.body.removeChild(downloadLink);
 });
 
+
 }
 
 
@@ -181,7 +183,6 @@ async function retrieveEpub(content, title, author, date) {
     <div className="App">
     <nav>
       <h2>Send To Kindle App</h2>
-      <h3>Logged in as: {auth.currentUser.email}</h3>
       <h3>Kindle Email: {kindleEmail}</h3>
       <button onClick={handleLogout}>
         Logout
@@ -189,7 +190,10 @@ async function retrieveEpub(content, title, author, date) {
       </nav>
       <header className="App-header">
         <input type="text" id="url" name="url" />
-        <button onClick={downloadEpub}>Get Article</button>
+        <br></br>
+        <button onClick={downloadEpub}>Download Article as EPUB</button>
+        <br></br>
+        <button onClick={downloadEpub}>Send Article to Kindle</button>
         <a
           className="App-link"
           href="https://reactjs.org"
