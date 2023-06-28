@@ -1,14 +1,6 @@
 import '../App.css';
 //import streamToBlob from 'stream-to-blob';
-import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged } from "firebase/auth";
-import { getAuth } from "firebase/auth";
-import { useNavigate } from 'react-router-dom';
-import {  signOut } from "firebase/auth";
-import { auth } from '../firebase';
-import { db } from '../firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-
+import React, { useState } from 'react';
 
 
 var validUrl = require('valid-url');;
@@ -18,57 +10,7 @@ var validUrl = require('valid-url');;
 
 
 function Home() {
-  const [kindleEmail, setKindleEmail] = useState('');
-  const navigate = useNavigate();
   
-
-  //get the user's kindle email address from the database
-  const getKindleEmail = async () => {
-    const user = auth.currentUser;
-    const uid = user.uid;
-    const docRef = doc(db, "users", uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-        setKindleEmail(docSnap.data().kindleEmail)
-    } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-        setKindleEmail("Error");
-    }
-  }
-
-  
-
-  const handleLogout = () => {               
-    signOut(auth).then(() => {
-    // Sign-out successful.
-        //navigate back to the login screen
-        navigate("/login")
-        console.log("Signed out successfully")
-    }).catch((error) => {
-    // An error happened.
-    });
-}
-
-  useEffect(()=>{
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
-          const uid = user.uid;
-          // ...
-          getKindleEmail();
-          console.log("uid", uid)
-        } else {
-          // User is signed out
-          setKindleEmail("Error");
-          navigate("/login")
-          console.log("user is logged out")
-        }
-      });
-     
-}, [])
 
   var articleHTML = useState("<p>Article HTML</p>");
 
@@ -183,17 +125,12 @@ async function retrieveEpub(content, title, author, date) {
     <div className="App">
     <nav>
       <h2>Send To Kindle App</h2>
-      <h3>Kindle Email: {kindleEmail}</h3>
-      <button onClick={handleLogout}>
-        Logout
-      </button>
       </nav>
       <header className="App-header">
         <input type="text" id="url" name="url" />
         <br></br>
         <button onClick={downloadEpub}>Download Article as EPUB</button>
         <br></br>
-        <button onClick={downloadEpub}>Send Article to Kindle</button>
         <a
           className="App-link"
           href="https://reactjs.org"
